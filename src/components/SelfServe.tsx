@@ -3,32 +3,33 @@ import { debounce } from 'lodash';
 import URL_LISTENER from '../utils/UrlListener';
 import WebView from 'react-native-webview';
 import { ActivityIndicator, View } from 'react-native';
-import { CBCheckoutProps } from '../interfaces/cb-types';
-import { CBCheckout } from '../models/CBCheckout';
+import { CBSelfServeProps } from '../interfaces/cb-types';
+import { CBSelfServe } from '../models/CBSelfServe';
 import { StepHandler } from '../helpers/StepHandler';
 import { styles } from '../styles/Styles';
 
-type CartState = {
-  planUrl: string;
+type PortalState = {
   isLoading: boolean;
+  portalUrl: string;
 };
 
-export class CheckoutCart extends Component<CBCheckoutProps, CartState> {
-  constructor(props: CBCheckoutProps) {
+export class SelfServe extends Component<CBSelfServeProps, PortalState> {
+  constructor(props: CBSelfServeProps) {
     super(props);
     this.state = {
-      planUrl: new CBCheckout(this.props).build(),
       isLoading: true,
+      portalUrl: new CBSelfServe(this.props).build(),
     };
   }
 
   render() {
+    console.log('Url: ' + this.state.portalUrl);
     return (
       <View style={styles.wrapper}>
         <WebView
           scalesPageToFit={true}
           originWhitelist={['*']}
-          source={{ uri: this.state.planUrl }}
+          source={{ uri: this.state.portalUrl }}
           style={styles}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -78,7 +79,6 @@ export class CheckoutCart extends Component<CBCheckoutProps, CartState> {
       return this.props.step(recognisedStepName);
     }
   };
-
   // Android fires multiple url change requests for a single url. Debounce is added to handle that
   debouncedNavigationHandler = debounce(this.navigationHandler, 300);
 }
